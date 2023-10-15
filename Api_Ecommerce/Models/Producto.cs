@@ -12,7 +12,12 @@
 
         public double Precio { get; set; }
 
-        
+        public int Stock { get; set; }
+
+        public Marca Marca { get; set; }
+
+        public Categoria Categoria { get; set; }
+
 
 
     }
