@@ -19,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(builder.
 //Configure services
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 builder.Services.AddScoped<IMarcaService,MarcaService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 //Authentication and authorization
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 
