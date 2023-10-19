@@ -1,4 +1,5 @@
-﻿using Api_Ecommerce.Interfaces;
+﻿using Api_Ecommerce.Data.Dtos;
+using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,5 +26,24 @@ namespace Api_Ecommerce.Controllers
         var orders = await _ordersService.GetOrdersByUserIdAndRoleAsync(userId, userRole);
             return Ok(orders);
         }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> AddOrder(OrderDto order)
+        {
+            if (order == null)  BadRequest("It is empty");
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            await _ordersService.StoreOrderAsync(order);
+
+            return Ok("Order added successfully");
+
+
+
+        }
+
+    
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Api_Ecommerce.Data;
+using Api_Ecommerce.Data.Dtos;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +27,32 @@ namespace Api_Ecommerce.Services
             return orders;
         }
 
-        public Task StoreOrderAsync(List<OrderItem> items, string userId, string userEmailAddress)
+        public async Task StoreOrderAsync(OrderDto order)
         {
-            throw new NotImplementedException();
+            var newOrder = new Order()
+            {
+                ClientId= order.ClientId,
+
+            };
+
+
+            await _context.Orders.AddAsync(newOrder);
+            await _context.SaveChangesAsync();
+
+            foreach (var item in order.Items)
+            {
+                var orderItem = new OrderItem()
+                {
+                    Cantidad = item.Cantidad,
+                    ProductoId = item.ProductoId,
+                    OrderId = newOrder.Id,
+                    
+                };
+                await _context.OrderItems.AddAsync(orderItem);
+            }
+
+            await _context.SaveChangesAsync();
+
         }
     }
 }

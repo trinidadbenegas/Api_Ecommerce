@@ -1,10 +1,13 @@
-﻿using Api_Ecommerce.Models;
+﻿using Api_Ecommerce.Data.Dtos;
+using Api_Ecommerce.Models;
 
 namespace Api_Ecommerce.Interfaces
 {
     public interface IOrdersService
     {
-        Task StoreOrderAsync(List<OrderItem> items, string userId, string userEmailAddress);
+        Task StoreOrderAsync( OrderDto order);
         Task<List<Order>> GetOrdersByUserIdAndRoleAsync(string userId, string userRole);
+
+
     }
 }
