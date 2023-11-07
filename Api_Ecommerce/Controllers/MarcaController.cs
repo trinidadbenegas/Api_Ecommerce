@@ -1,6 +1,7 @@
 ﻿using Api_Ecommerce.Data.Dtos;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
+using Api_Ecommerce.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +45,29 @@ namespace Api_Ecommerce.Controllers
            return Ok("Marca creada con éxito");
             }
            return BadRequest();
+        }
+
+        [HttpDelete]
+
+
+        public async Task<IActionResult> BorrarMarca(int id)
+        {
+            Marca marcaBorrar = await _marcaService.GetMarcaById(id);
+            await _marcaService.DeleteMarca(id, marcaBorrar);
+            return Ok("The product was deleted");
+        }
+
+        [HttpPut]
+
+        public async Task<IActionResult> EditarMarca(int id, [FromBody] MarcaDto marca)
+        {
+            var marcaEditar = new Marca
+            {
+                Id = id,
+                Name = marca.Name,
+            };
+            await _marcaService.UpdateMarca(id, marcaEditar);
+            return Ok("Product updated  sucessfully ");
         }
     }
 }

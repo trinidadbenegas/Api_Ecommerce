@@ -46,5 +46,29 @@ namespace Api_Ecommerce.Controllers
             return BadRequest();
         }
 
+
+        [HttpDelete]
+        
+
+        public async Task<IActionResult> BorrarCategoria(int id)
+        {
+            Categoria categoriaBorrar = await _categoriaService.GetCategoriaById(id);
+            await _categoriaService.DeleteCategoria(id, categoriaBorrar);
+            return Ok("The product was deleted");
+        }
+
+        [HttpPut]
+        
+        public async Task< IActionResult> EditarCategoria(int id, [FromBody] CategoriaDto categoria)
+        {
+            var categoriaEditar = new Categoria
+            {
+                Id = id,
+                Name = categoria.Name,
+            };
+           await _categoriaService.UpdateCategoria(id, categoriaEditar);
+            return Ok("Product updated  sucessfully ");
+        }
+
     }
 }

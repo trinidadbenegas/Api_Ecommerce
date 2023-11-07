@@ -1,4 +1,5 @@
 ﻿using Api_Ecommerce.Data;
+using Api_Ecommerce.Data.Dtos;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +49,9 @@ namespace Api_Ecommerce.Services
 
         public async Task UpdateCategoria(int id, Categoria categoria)
         {
-           if( id == categoria.Id ) { 
+          
+            
+             if( id == categoria.Id ) { 
             _context.Categorias.Update(categoria);
             await _context.SaveChangesAsync();
             }

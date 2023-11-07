@@ -1,4 +1,5 @@
-﻿using Api_Ecommerce.Models;
+﻿using Api_Ecommerce.Data.Dtos;
+using Api_Ecommerce.Models;
 
 namespace Api_Ecommerce.Interfaces
 {
