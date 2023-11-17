@@ -53,6 +53,19 @@ namespace Api_Ecommerce.Controllers
             return Ok(productosPorCategoria);
         }
 
+        [HttpGet]
+        [Route("Marca")]
+
+        public async Task<IActionResult> GetProductoPorMarca(string marcaName)
+        {
+
+            var productosPorMarca = await _productoService.FiltrarProductosByMarca(marcaName);
+
+            if (productosPorMarca == null) { return NotFound(); }
+
+            return Ok(productosPorMarca);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CrearProducto(ProductoDto producto)
         {

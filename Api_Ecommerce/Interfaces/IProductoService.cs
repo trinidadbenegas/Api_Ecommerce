@@ -16,6 +16,6 @@ namespace Api_Ecommerce.Interfaces
 
         Task<List<Producto>> FiltrarProductoByCategoria(string categoriaName);
 
-        Task<List<Producto>> FiltrarProductosByMarca(int marcaId);
+        Task<List<Producto>> FiltrarProductosByMarca(string marcaName);
     }
 }

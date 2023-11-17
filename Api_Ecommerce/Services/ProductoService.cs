@@ -32,13 +32,13 @@ namespace Api_Ecommerce.Services
 
         public async Task<List<Producto>> FiltrarProductoByCategoria(string categoriaName)
         {
-            var productosPorCategoria = await _context.Productos.Where(p => p.Categoria.Name.Trim().ToUpper() == categoriaName).ToListAsync();
+            var productosPorCategoria = await _context.Productos.Where(p => p.Categoria.Name.Trim().ToUpper() == categoriaName.Trim().ToUpper()).ToListAsync();
             return productosPorCategoria;
         }
 
-        public async Task<List<Producto>> FiltrarProductosByMarca(int marcaId)
+        public async Task<List<Producto>> FiltrarProductosByMarca(string marcaName)
         {
-            var productosPorMarca = await _context.Productos.Where(p => p.Marca.Id == marcaId).ToListAsync();
+            var productosPorMarca = await _context.Productos.Where(p => p.Marca.Name.Trim().ToUpper() == marcaName.Trim().ToUpper()).ToListAsync();
             return productosPorMarca;
         }
 
