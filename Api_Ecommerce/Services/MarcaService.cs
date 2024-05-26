@@ -40,7 +40,12 @@ namespace Api_Ecommerce.Services
         {
             return await _context.Marcas.FindAsync(id);
         }
-
+        public async Task<Marca> GetMarcaByName(string marcaName)
+        {
+            var marcaNormalized= marcaName.Trim().ToUpper();
+            var marcaEncontrada= await _context.Marcas.FirstOrDefaultAsync(m => m.Name.Trim().ToUpper() == marcaNormalized);
+            return marcaEncontrada;
+        }
         public async Task<List<Producto>> GetProductosPorMarca(int marcaId)
         {
             return await _context.Productos.Where(p => p.Marca.Id == marcaId).ToListAsync();

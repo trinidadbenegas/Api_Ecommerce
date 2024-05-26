@@ -32,24 +32,24 @@ namespace Api_Ecommerce.Services
 
         public async Task<List<Producto>> FiltrarProductoByCategoria(string categoriaName)
         {
-            var productosPorCategoria = await _context.Productos.Where(p => p.Categoria.Name.Trim().ToUpper() == categoriaName.Trim().ToUpper()).ToListAsync();
+            var productosPorCategoria = await _context.Productos.Where(p => p.Categoria.Name.Trim().ToUpper() == categoriaName.Trim().ToUpper()).Include(p=> p.Marca).Include(p=> p.Categoria).ToListAsync();
             return productosPorCategoria;
         }
 
         public async Task<List<Producto>> FiltrarProductosByMarca(string marcaName)
         {
-            var productosPorMarca = await _context.Productos.Where(p => p.Marca.Name.Trim().ToUpper() == marcaName.Trim().ToUpper()).ToListAsync();
+            var productosPorMarca = await _context.Productos.Where(p => p.Marca.Name.Trim().ToUpper() == marcaName.Trim().ToUpper()).Include(p=> p.Marca).Include(p=> p.Categoria).ToListAsync();
             return productosPorMarca;
         }
 
         public async Task<Producto> ObtenerProductoById(int id)
         {
-            return await _context.Productos.FindAsync(id);
+            return await _context.Productos.Include(p=> p.Marca).Include(p=> p.Categoria).FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<List<Producto>> ObtenerProductos()
         {
-          return await _context.Productos.ToListAsync();
+          return await _context.Productos.Include(p => p.Marca).Include(p => p.Categoria).ToListAsync();
 
          
         }

@@ -2,6 +2,7 @@
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,12 @@ namespace Api_Ecommerce.Controllers
     public class MarcaController : ControllerBase
     {
         private readonly IMarcaService _marcaService;
+        private readonly IMapper _mapper;
 
-        public MarcaController( IMarcaService marcaService)
+        public MarcaController( IMarcaService marcaService, IMapper mapper)
         {
             _marcaService= marcaService;
+            _mapper = mapper;
             
         }
 
@@ -26,25 +29,30 @@ namespace Api_Ecommerce.Controllers
         
            var marcas = await _marcaService.GetAllMarcas();
 
-            return Ok(marcas);
-        
+            return Ok(marcas.Select(marca => _mapper.Map<MarcaDtoId>(marca)));
+
         }
 
 
         [HttpPost]
 
-        public async Task<IActionResult> CreateMarca(MarcaDto marca)
+        public async Task<IActionResult> CreateMarca(MarcaDto marcaDto)
         {
-            if (ModelState.IsValid) { 
-            Marca newMarca= new Marca()
-            {
-                Name = marca.Name,
-            };
+            var marcaExistente= _marcaService.GetMarcaByName(marcaDto.Name);
 
-           await _marcaService.CreateMarca(newMarca);
-           return Ok("Marca creada con éxito");
+            if (!ModelState.IsValid && marcaExistente != null)
+            {
+
+                return BadRequest("No se pudo crear la marca");
+               
             }
-           return BadRequest();
+
+            Marca newMarca = _mapper.Map<Marca>(marcaDto);
+
+            await _marcaService.CreateMarca(newMarca);
+            return Ok("Marca creada con éxito");
+
+
         }
 
         [HttpDelete]

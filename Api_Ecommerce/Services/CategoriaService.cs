@@ -37,6 +37,18 @@ namespace Api_Ecommerce.Services
            return await _context.Categorias.ToListAsync();
         }
 
+        public async Task UpdateCategoria(int id, Categoria categoria)
+        {
+
+
+            if (id == categoria.Id)
+            {
+                _context.Categorias.Update(categoria);
+                await _context.SaveChangesAsync();
+            }
+
+        }
+
         public async Task<Categoria> GetCategoriaById(int id)
         {
             return await _context.Categorias.FindAsync(id);
@@ -47,15 +59,10 @@ namespace Api_Ecommerce.Services
             return await _context.Productos.Where(p => p.Categoria.Id == categoriaId).ToListAsync();
         }
 
-        public async Task UpdateCategoria(int id, Categoria categoria)
+        public async Task<Categoria> GetCategoriaByName(string categoriaName)
         {
-          
-            
-             if( id == categoria.Id ) { 
-            _context.Categorias.Update(categoria);
-            await _context.SaveChangesAsync();
-            }
-
+            var categoriaNormalized = categoriaName.Trim().ToUpper();
+            return await _context.Categorias.FirstOrDefaultAsync(c => c.Name == categoriaNormalized);
         }
     }
 }

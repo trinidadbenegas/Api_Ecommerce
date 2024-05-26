@@ -1,3 +1,4 @@
+using Api_Ecommerce;
 using Api_Ecommerce.Data;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(builder.Configuration.GetConnectionString("DefaultString"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql")));
 
 //Configure services
@@ -22,6 +24,9 @@ builder.Services.AddScoped<IMarcaService,MarcaService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IShoppingCart, ShoppingCartService>();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+
 //Authentication and authorization
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 

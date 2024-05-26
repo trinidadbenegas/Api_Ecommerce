@@ -7,6 +7,6 @@ namespace Api_Ecommerce.Interfaces
     {
         Task  StoreShoppingCartAsync(ShoppingCartDto shoppingCart);
 
-        Task <List<ShoppingCart> > GetShoppingCartbyClientId(int clientId);
+        Task <List<ShoppingCart> > GetShoppingCartbyUserIdandRole(string userId, string userRole);
     }
 }

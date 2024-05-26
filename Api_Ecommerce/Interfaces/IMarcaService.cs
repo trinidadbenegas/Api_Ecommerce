@@ -17,6 +17,8 @@ namespace Api_Ecommerce.Interfaces
 
         Task <Marca> GetMarcaById(int id);
 
+        Task<Marca> GetMarcaByName(string marcaName);
+
 
 
 

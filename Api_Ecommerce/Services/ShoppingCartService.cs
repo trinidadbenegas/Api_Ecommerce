@@ -2,6 +2,7 @@
 using Api_Ecommerce.Data.Dtos;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_Ecommerce.Services
 {
@@ -12,6 +13,18 @@ namespace Api_Ecommerce.Services
         public ShoppingCartService( AppDbContext context)
         {
             _context= context;
+        }
+
+        public async Task<List<ShoppingCart>> GetShoppingCartbyUserIdandRole(string userId, string userRole)
+        {
+            var orders = await _context.ShoppingCarts.Include(n => n.Items).ThenInclude(n => n.Producto).Include(n => n.Client).ToListAsync();
+
+            if (userRole != "Admin")
+            {
+                orders = orders.Where(n => n.Client.Id == userId).ToList();
+            }
+
+            return orders;
         }
 
         public async Task StoreShoppingCartAsync(ShoppingCartDto shoppingCartDto)

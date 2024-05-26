@@ -2,6 +2,7 @@
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,19 +13,21 @@ namespace Api_Ecommerce.Controllers
     public class CategoriaController : ControllerBase
     {
         private readonly ICategoriaService _categoriaService;
+        private readonly IMapper _mapper;
 
-        public CategoriaController(ICategoriaService categoriaService)
+        public CategoriaController(ICategoriaService categoriaService, IMapper mapper)
         {
             _categoriaService= categoriaService;
+            _mapper= mapper;
         }
         [HttpGet]
 
-        public async Task<IActionResult> GetAllMarcas()
+        public async Task<IActionResult> GetAllCategorias()
         {
 
             var categorias = await _categoriaService.GetAllCategorias();
 
-            return Ok(categorias);
+            return Ok(categorias.Select( categoria=> _mapper.Map<CategoriaDtoId>(categoria)));
 
         }
 
@@ -35,10 +38,8 @@ namespace Api_Ecommerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                Categoria newCategoria = new Categoria()
-                {
-                    Name = categoria.Name,
-                };
+                
+                var newCategoria = _mapper.Map<Categoria>(categoria);
 
                 await _categoriaService.CreateCategoria(newCategoria);
                 return Ok("Categoria creada con éxito");
@@ -59,15 +60,20 @@ namespace Api_Ecommerce.Controllers
 
         [HttpPut]
         
-        public async Task< IActionResult> EditarCategoria(int id, [FromBody] CategoriaDto categoria)
+        public async Task< IActionResult> EditarCategoria(int id, [FromBody] CategoriaDtoId categoria)
         {
-            var categoriaEditar = new Categoria
-            {
-                Id = id,
-                Name = categoria.Name,
-            };
+            //var categoriaEditar = new Categoria
+            //{
+            //    Id = id,
+            //    Name = categoria.Name,
+            //};
+
+            var categoriaEditar = _mapper.Map<Categoria>(categoria);
            await _categoriaService.UpdateCategoria(id, categoriaEditar);
+
             return Ok("Product updated  sucessfully ");
+
+            //si  se ingresa una id que no matchea con alguna id igual sale mje positivo. manejar posibles errores.
         }
 
     }

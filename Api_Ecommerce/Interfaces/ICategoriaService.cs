@@ -18,6 +18,7 @@ namespace Api_Ecommerce.Interfaces
 
         Task <Categoria> GetCategoriaById(int id);
 
+        Task<Categoria> GetCategoriaByName(string categoriaName);
 
 
 

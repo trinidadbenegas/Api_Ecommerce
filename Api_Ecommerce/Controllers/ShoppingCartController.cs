@@ -20,7 +20,15 @@ namespace Api_Ecommerce.Controllers
             _shoppingCartService = shoppingCartService;
             _productoService = productoService;
         }
+        [HttpGet]
+        public async Task<IActionResult> GetShoppingCartByRoleAndId()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userRole = User.FindFirstValue(ClaimTypes.Role);
 
+            var orders = await _shoppingCartService.GetShoppingCartbyUserIdandRole(userId, userRole);
+            return Ok(orders);
+        }
         [HttpPost]
         public async Task<IActionResult> AddShoppingCart([FromBody] ShoppingCartDto shoppingCartDto)
         {
