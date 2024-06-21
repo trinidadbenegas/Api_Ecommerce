@@ -33,7 +33,7 @@ namespace Api_Ecommerce.Controllers
 
             var productos = await _productoService.ObtenerProductos();
 
-            return Ok(productos.Select(producto => _mapper.Map<ProductoDto>(producto)));
+            return Ok(productos.Select(producto => _mapper.Map<ProductoDtoRequest>(producto)));
 
         }
 
@@ -49,7 +49,7 @@ namespace Api_Ecommerce.Controllers
                 return NotFound();
             }
 
-            var productoDto = _mapper.Map<ProductoDto>(producto);
+            var productoDto = _mapper.Map<ProductoDtoRequest>(producto);
             return Ok(productoDto);
         }
         [HttpGet]
@@ -62,7 +62,7 @@ namespace Api_Ecommerce.Controllers
 
             if(productosPorCategoria == null) { return NotFound(); }
 
-            return Ok(productosPorCategoria.Select(producto => _mapper.Map<ProductoDto>(producto)));
+            return Ok(productosPorCategoria.Select(producto => _mapper.Map<ProductoDtoRequest>(producto)));
 
             
         }
@@ -77,7 +77,7 @@ namespace Api_Ecommerce.Controllers
 
             if (productosPorMarca == null) { return NotFound(); }
 
-            return Ok(productosPorMarca.Select(producto => _mapper.Map<ProductoDto>(producto)));
+            return Ok(productosPorMarca.Select(producto => _mapper.Map<ProductoDtoRequest>(producto)));
 
            
         }
@@ -101,8 +101,8 @@ namespace Api_Ecommerce.Controllers
 
             Producto productoNuevo = _mapper.Map<Producto>(productoDto);
 
-            //productoNuevo.Marca = marcaExistente;
-           // productoNuevo.Categoria = categoriaExistente;
+            productoNuevo.Marca = marcaExistente;
+            productoNuevo.Categoria = categoriaExistente;
 
             await _productoService.AddProducto(productoNuevo);
             return Ok("Producto Creado con èxito");

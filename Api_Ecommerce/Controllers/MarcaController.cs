@@ -38,7 +38,7 @@ namespace Api_Ecommerce.Controllers
 
         public async Task<IActionResult> CreateMarca(MarcaDto marcaDto)
         {
-            var marcaExistente= _marcaService.GetMarcaByName(marcaDto.Name);
+            var marcaExistente= await _marcaService.GetMarcaByName(marcaDto.Name);
 
             if (!ModelState.IsValid && marcaExistente != null)
             {

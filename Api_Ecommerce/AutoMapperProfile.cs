@@ -32,8 +32,8 @@ namespace Api_Ecommerce
             ConfigureMappings();
         }
 
-       
-        
+
+
 
         // Método para configurar los mapeos
         private void ConfigureMappings()
@@ -47,21 +47,17 @@ namespace Api_Ecommerce
             CreateMap<Marca, MarcaDtoId>();
             CreateMap<MarcaDtoId, Marca>();
             CreateMap<Producto, ProductoDto>()
-                .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => new CategoriaDto { Name = src.Categoria.Name }))
-                .ForMember(dest => dest.Marca, opt => opt.MapFrom(src => new MarcaDto { Name = src.Marca.Name }));
+               .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.Categoria))
+               .ForMember(dest => dest.Marca, opt => opt.MapFrom(src => src.Marca));
             CreateMap<ProductoDto, Producto>()
-               .ForMember(dest => dest.Categoria, opt => opt.Ignore())
-                .ForMember(dest => dest.Marca, opt => opt.Ignore())
-                .AfterMap(async (src, dest) =>
-                {
-                    // Aquí realizas la lógica para obtener las entidades existentes y asignarlas a dest.Categoria y dest.Marca
-                    // Utilizas _context para recuperar las entidades existentes
-                    Categoria categoriaExistente = await _categoriaService.GetCategoriaByName(src.Categoria.Name);
-                    Marca marcaExistente = await _marcaService.GetMarcaByName(src.Marca.Name);
-
-                    dest.Categoria = categoriaExistente ?? new Categoria { Name = src.Categoria.Name };
-                    dest.Marca = marcaExistente ?? new Marca { Name = src.Marca.Name };
-                });
+               .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.Categoria))
+               .ForMember(dest => dest.Marca, opt => opt.MapFrom(src => src.Marca));
+            CreateMap<Producto, ProductoDtoRequest>()
+               .ForMember(dest => dest.CategoriaId, opt => opt.MapFrom(src => src.Categoria.Id))
+               .ForMember(dest => dest.MarcaId, opt => opt.MapFrom(src => src.Marca.Id));
+            CreateMap<ProductoDtoRequest, Producto>()
+               .ForPath(dest => dest.Categoria.Id, opt => opt.MapFrom(src => src.CategoriaId))
+               .ForPath(dest => dest.Marca.Id, opt => opt.MapFrom(src => src.MarcaId));
         }
     }
 }

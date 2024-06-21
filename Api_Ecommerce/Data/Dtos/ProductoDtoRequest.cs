@@ -1,7 +1,8 @@
 ﻿namespace Api_Ecommerce.Data.Dtos
 {
-    public class ProductoDtoPost
+    public class ProductoDtoRequest
     {
+        public int Id { get; set; }
         public string Descripcion { get; set; }
 
         public string ImageUrl { get; set; }
