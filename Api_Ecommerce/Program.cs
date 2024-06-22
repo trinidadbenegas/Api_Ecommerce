@@ -4,20 +4,18 @@ using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-//.AddJsonOptions(options =>
-//{
-//    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-//    options.JsonSerializerOptions.WriteIndented = true;
-//});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -30,15 +28,30 @@ builder.Services.AddScoped<IMarcaService,MarcaService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IShoppingCart, ShoppingCartService>();
+builder.Services.AddSingleton<GeneradorTokenJWT>();
+
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 
 //Authentication and authorization
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 
+// Configurar la autenticación JWT
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // Solo para desarrollo; usar HTTPS en producción
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("Ap113commerceJWT")), // Reemplazar con tu clave secreta
+        ValidateIssuer = false, // Siempre en false para pruebas
+        ValidateAudience = false // Siempre en false para pruebas
+    };
 });
 
 var app = builder.Build();

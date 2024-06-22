@@ -2,6 +2,7 @@
 using Api_Ecommerce.Data.Dtos;
 using Api_Ecommerce.Data.Static;
 using Api_Ecommerce.Models;
+using Api_Ecommerce.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,12 @@ namespace Api_Ecommerce.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly AppDbContext _context;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, AppDbContext context)
+        private readonly GeneradorTokenJWT _generadorToken;
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, GeneradorTokenJWT generadorToken, AppDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _generadorToken = generadorToken;
             _context = context;
         }
 
@@ -39,7 +42,8 @@ namespace Api_Ecommerce.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
                     if (result.Succeeded)
                     {
-                        return Ok();
+                        var token = _generadorToken.GenerateJwtToken(user.Id, "Ap113commerceJWT");
+                        return Ok(new { token });
                     }
                 }
                 return BadRequest("Wrong credentials");
