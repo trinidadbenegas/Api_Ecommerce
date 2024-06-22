@@ -17,7 +17,11 @@ namespace Api_Ecommerce.Services
 
         public async Task<List<ShoppingCart>> GetShoppingCartbyUserIdandRole(string userId, string userRole)
         {
-            var orders = await _context.ShoppingCarts.Include(n => n.Items).ThenInclude(n => n.Producto).Include(n => n.Client).ToListAsync();
+            var orders = await _context.ShoppingCarts
+                .Include(n => n.Items)
+                .ThenInclude(n => n.Producto)
+                .Include(n => n.Client)
+                .ToListAsync();
 
             if (userRole != "Admin")
             {
@@ -56,7 +60,7 @@ namespace Api_Ecommerce.Services
 
                     shoppingCart.Items.Add(shoppingItem);
                 }
-                // Puedes manejar el caso donde el producto no se encuentra en la base de datos.
+                
             }
 
             shoppingCart.Total = total;

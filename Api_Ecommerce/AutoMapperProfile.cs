@@ -46,6 +46,7 @@ namespace Api_Ecommerce
             CreateMap<MarcaDto, Marca>();
             CreateMap<Marca, MarcaDtoId>();
             CreateMap<MarcaDtoId, Marca>();
+            CreateMap<MarcaDto, Marca>();
             CreateMap<Producto, ProductoDto>()
                .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.Categoria))
                .ForMember(dest => dest.Marca, opt => opt.MapFrom(src => src.Marca));
@@ -58,6 +59,11 @@ namespace Api_Ecommerce
             CreateMap<ProductoDtoRequest, Producto>()
                .ForPath(dest => dest.Categoria.Id, opt => opt.MapFrom(src => src.CategoriaId))
                .ForPath(dest => dest.Marca.Id, opt => opt.MapFrom(src => src.MarcaId));
+
+            CreateMap<ShoppingCart, ShoppingCartResponseDto>();
+            CreateMap<ShoppingItem, ShoppingItemDto>();
+            CreateMap<AppUser, ClientDto>();
+
         }
     }
 }

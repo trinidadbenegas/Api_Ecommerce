@@ -2,6 +2,7 @@
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -14,11 +15,13 @@ namespace Api_Ecommerce.Controllers
     {
         private readonly IShoppingCart _shoppingCartService;
         private readonly IProductoService _productoService;
+        private readonly IMapper _mapper;
 
-        public ShoppingCartController( IShoppingCart shoppingCartService, IProductoService productoService)
+        public ShoppingCartController( IShoppingCart shoppingCartService, IProductoService productoService, IMapper mapper)
         {
             _shoppingCartService = shoppingCartService;
             _productoService = productoService;
+            _mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetShoppingCartByRoleAndId()
@@ -27,7 +30,8 @@ namespace Api_Ecommerce.Controllers
             string userRole = User.FindFirstValue(ClaimTypes.Role);
 
             var orders = await _shoppingCartService.GetShoppingCartbyUserIdandRole(userId, userRole);
-            return Ok(orders);
+           // return Ok(orders);
+            return Ok(orders.Select(o => _mapper.Map<ShoppingCartResponseDto>(o)));
         }
         [HttpPost]
         public async Task<IActionResult> AddShoppingCart([FromBody] ShoppingCartDto shoppingCartDto)
