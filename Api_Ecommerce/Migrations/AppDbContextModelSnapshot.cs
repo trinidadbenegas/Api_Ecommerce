@@ -173,6 +173,8 @@ namespace Api_Ecommerce.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrderId");
+
                     b.HasIndex("ProductoId");
 
                     b.ToTable("OrderItems");
@@ -418,7 +420,7 @@ namespace Api_Ecommerce.Migrations
                 {
                     b.HasOne("Api_Ecommerce.Models.Order", "Order")
                         .WithMany("Items")
-                        .HasForeignKey("ProductoId")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

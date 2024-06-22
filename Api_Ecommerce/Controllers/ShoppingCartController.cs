@@ -14,15 +14,16 @@ namespace Api_Ecommerce.Controllers
     public class ShoppingCartController : ControllerBase
     {
         private readonly IShoppingCart _shoppingCartService;
-        private readonly IProductoService _productoService;
+
         private readonly IMapper _mapper;
 
-        public ShoppingCartController( IShoppingCart shoppingCartService, IProductoService productoService, IMapper mapper)
+        public ShoppingCartController( IShoppingCart shoppingCartService, IMapper mapper)
         {
             _shoppingCartService = shoppingCartService;
-            _productoService = productoService;
+            
             _mapper = mapper;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetShoppingCartByRoleAndId()
         {
@@ -30,7 +31,7 @@ namespace Api_Ecommerce.Controllers
             string userRole = User.FindFirstValue(ClaimTypes.Role);
 
             var orders = await _shoppingCartService.GetShoppingCartbyUserIdandRole(userId, userRole);
-           // return Ok(orders);
+           
             return Ok(orders.Select(o => _mapper.Map<ShoppingCartResponseDto>(o)));
         }
         [HttpPost]

@@ -62,6 +62,8 @@ namespace Api_Ecommerce
 
             CreateMap<ShoppingCart, ShoppingCartResponseDto>();
             CreateMap<ShoppingItem, ShoppingItemDto>();
+            CreateMap<Order, OrderResponseDto>();
+            CreateMap<OrderItem, OrderItemDto>();
             CreateMap<AppUser, ClientDto>();
 
         }

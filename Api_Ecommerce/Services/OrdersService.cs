@@ -17,7 +17,11 @@ namespace Api_Ecommerce.Services
         }
         public async Task<List<Order>> GetOrdersByUserIdAndRoleAsync(string userId, string userRole)
         {
-            var orders = await _context.Orders.Include(n => n.Items).ThenInclude(n => n.Producto).Include(n => n.Client).ToListAsync();
+            var orders = await _context.Orders
+                .Include(n => n.Items)
+                .ThenInclude(n => n.Producto)
+                .Include(n => n.Client)
+                .ToListAsync();
 
             if (userRole != "Admin")
             {
@@ -29,28 +33,72 @@ namespace Api_Ecommerce.Services
 
         public async Task StoreOrderAsync(OrderDto order)
         {
-            var newOrder = new Order()
-            {
-                ClientId= order.ClientId,
+            //    var newOrder = new Order()
+            //    {
+            //        ClientId= order.ClientId,
+            //        Items= new List<OrderItem>()
 
+            //    };
+
+            //    double total = 0.0;
+
+            //    foreach (var item in order.Items)
+            //    {
+            //        var producto = await _context.Productos.FindAsync(item.ProductoId);
+            //        if(producto != null)
+            //        {
+            //            var orderItem = new OrderItem()
+            //            {
+            //                Cantidad = item.Cantidad,
+            //                ProductoId = item.ProductoId,
+            //                Producto= producto,
+            //                OrderId = newOrder.Id,
+            //                Subtotal = item.Cantidad * producto.Precio
+            //            };
+
+            //            total += orderItem.Subtotal;
+            //            newOrder.Items.Add(orderItem);
+            //        }              
+            //    }
+
+            //    newOrder.Total = total;
+
+            //    await _context.Orders.AddAsync(newOrder);
+            //    await _context.SaveChangesAsync();
+
+            var newOrder = new Order
+            {
+                ClientId = order.ClientId,
+                Items = new List<OrderItem>()
             };
 
+            double total = 0.0;
 
-            await _context.Orders.AddAsync(newOrder);
-            await _context.SaveChangesAsync();
-
-            foreach (var item in order.Items)
+            foreach (var itemDto in order.Items)
             {
-                var orderItem = new OrderItem()
+                var producto = await _context.Productos.FindAsync(itemDto.ProductoId);
+
+                if (producto != null)
                 {
-                    Cantidad = item.Cantidad,
-                    ProductoId = item.ProductoId,
-                    OrderId = newOrder.Id,
-                    
-                };
-                await _context.OrderItems.AddAsync(orderItem);
+                    var shoppingItem = new OrderItem
+                    {
+                        Cantidad = itemDto.Cantidad,
+                        ProductoId = itemDto.ProductoId,
+                        Producto = producto,
+                        OrderId = newOrder.Id,
+                        Subtotal = itemDto.Cantidad * producto.Precio
+                    };
+
+                    total += shoppingItem.Subtotal;
+
+                    newOrder.Items.Add(shoppingItem);
+                }
+
             }
 
+            newOrder.Total = total;
+
+            await _context.Orders.AddAsync(newOrder);
             await _context.SaveChangesAsync();
 
         }

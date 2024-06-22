@@ -15,7 +15,7 @@ namespace Api_Ecommerce.Models
         public double Subtotal { get; set; }
 
         public int OrderId { get; set; }
-        [ForeignKey(nameof(ProductoId))]
+        [ForeignKey(nameof(OrderId))]
         public Order Order { get; set; }
 
 

@@ -1,5 +1,6 @@
 ﻿using Api_Ecommerce.Data.Dtos;
 using Api_Ecommerce.Interfaces;
+using AutoMapper;
 using Api_Ecommerce.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,12 @@ namespace Api_Ecommerce.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrdersService _ordersService;
-        public OrderController(IOrdersService ordersService)
+
+        private readonly IMapper _mapper;
+        public OrderController(IOrdersService ordersService, IMapper mapper)
         {
             _ordersService = ordersService;
+            _mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetOrdersByRoleAndId()
@@ -24,13 +28,14 @@ namespace Api_Ecommerce.Controllers
         string userRole = User.FindFirstValue(ClaimTypes.Role);
 
         var orders = await _ordersService.GetOrdersByUserIdAndRoleAsync(userId, userRole);
-            return Ok(orders);
+
+        return Ok(orders.Select(o => _mapper.Map<OrderResponseDto>(o)));
         }
 
 
         [HttpPost]
 
-        public async Task<IActionResult> AddOrder(OrderDto order)
+        public async Task<IActionResult> AddOrder([FromBody] OrderDto order)
         {
             if (order == null)  BadRequest("It is empty");
 
@@ -39,8 +44,6 @@ namespace Api_Ecommerce.Controllers
             await _ordersService.StoreOrderAsync(order);
 
             return Ok("Order added successfully");
-
-
 
         }
 
