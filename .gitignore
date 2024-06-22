@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # Carpeta de migraciones
 Migrations/
+/Api_Ecommerce/Migrations/20240618154349_InitialMigration.cs
+/Api_Ecommerce/Migrations/AppDbContextModelSnapshot.cs
