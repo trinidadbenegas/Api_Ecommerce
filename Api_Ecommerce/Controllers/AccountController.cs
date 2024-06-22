@@ -77,5 +77,15 @@ namespace Api_Ecommerce.Controllers
             return Ok("Register Completed");
         }
 
+        [HttpPost]
+        [Route("logout")]
+
+        public async Task<IActionResult> LogOut()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok("Sesión cerrada");
+        }
+
+
     }
 }
