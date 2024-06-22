@@ -29,8 +29,16 @@ builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IShoppingCart, ShoppingCartService>();
 builder.Services.AddSingleton<GeneradorTokenJWT>();
-
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ApiCorsPolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
+});
 
 
 //Authentication and authorization
@@ -62,7 +70,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("ApiCorsPolicy");
 app.UseHttpsRedirection();
 
 
