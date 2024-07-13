@@ -1,8 +1,10 @@
 ﻿using Api_Ecommerce.Data.Dtos;
+using Api_Ecommerce.Data.Static;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -83,6 +85,7 @@ namespace Api_Ecommerce.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> CrearProducto(ProductoDto productoDto)
         {
             if (!ModelState.IsValid || productoDto == null)

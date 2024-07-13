@@ -7,16 +7,20 @@ namespace Api_Ecommerce.Services
 {
     public class GeneradorTokenJWT
     {
-        public string GenerateJwtToken(string userId, string secretKey, int expiryInMinutes = 60)
+        public string GenerateJwtToken(string userId, string secretKey, string role, int expiryInMinutes = 60)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
+
+            var claims = new ClaimsIdentity(new[]
+{
+                new Claim(ClaimTypes.NameIdentifier, userId),
+                new Claim(ClaimTypes.Role, role) // Agregar el claim de rol específico
+            });
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-            new Claim(ClaimTypes.NameIdentifier, userId)
-        }),
+                Subject = claims,
                 Expires = DateTime.UtcNow.AddMinutes(expiryInMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

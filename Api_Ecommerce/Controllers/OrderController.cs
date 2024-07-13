@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api_Ecommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IOrdersService _ordersService;
@@ -21,7 +23,10 @@ namespace Api_Ecommerce.Controllers
             _ordersService = ordersService;
             _mapper = mapper;
         }
+
+        
         [HttpGet]
+        
         public async Task<IActionResult> GetOrdersByRoleAndId()
         { 
         string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

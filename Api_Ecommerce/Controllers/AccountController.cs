@@ -3,6 +3,7 @@ using Api_Ecommerce.Data.Dtos;
 using Api_Ecommerce.Data.Static;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,10 @@ namespace Api_Ecommerce.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
                     if (result.Succeeded)
                     {
-                        var token = _generadorToken.GenerateJwtToken(user.Id, "Ap113commerceJWT");
+                        var roles = await _userManager.GetRolesAsync(user);
+                        string role = roles.Contains("Admin") ? "Admin" : "User";
+
+                        var token = _generadorToken.GenerateJwtToken(user.Id, "Ap113commerceJWT", role);
                         return Ok(new { token });
                     }
                 }
@@ -81,6 +85,7 @@ namespace Api_Ecommerce.Controllers
             return Ok("Register Completed");
         }
 
+        [Authorize]
         [HttpPost]
         [Route("logout")]
 

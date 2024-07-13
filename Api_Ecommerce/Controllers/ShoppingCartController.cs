@@ -3,6 +3,7 @@ using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,6 +12,7 @@ namespace Api_Ecommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ShoppingCartController : ControllerBase
     {
         private readonly IShoppingCart _shoppingCartService;
