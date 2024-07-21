@@ -125,23 +125,30 @@ namespace Api_Ecommerce.Controllers
         [HttpPut]
         public async Task<IActionResult> EditarProducto(int productoId,[FromBody] ProductoDto producto)
         {
-            var marca = new Marca
-            { Name = producto.Marca.Name };
-            var categoria = new Categoria
-            { Name = producto.Categoria.Name };
-            var productoEditado = new Producto
+
+            var productoEditado = await _productoService.ObtenerProductoById(productoId);
+
+            var marcaProductoEditado = await _marcaService.GetMarcaByName(producto.Marca.Name);
+            if (marcaProductoEditado == null) return NotFound(new {message = "Branch does not exist"});
+
+            var categoriaProductoEditado = await _categoriaService.GetCategoriaByName(producto.Categoria.Name);
+            if (categoriaProductoEditado == null) return NotFound(new { message = "Category does not exist" });
+
+            if (productoEditado != null)
             {
-                Id = productoId,
-                Nombre= producto.Nombre,
-                Descripcion= producto.Descripcion,
-                ImageUrl = producto.ImageUrl,
-                Precio= producto.Precio,
-                Stock = producto.Stock,
-                Marca= marca,
-                Categoria= categoria,
-            };
-            await _productoService.UpdateProducto(productoId, productoEditado);
-            return Ok("Product updated  sucessfully ");
+                productoEditado.Nombre = producto.Nombre;
+                productoEditado.Descripcion = producto.Descripcion;
+                productoEditado.ImageUrl = producto.ImageUrl;
+                productoEditado.Precio = producto.Precio;
+                productoEditado.Stock = producto.Stock;
+                productoEditado.Marca = marcaProductoEditado;
+                productoEditado.Categoria = categoriaProductoEditado;
+
+                await _productoService.UpdateProducto(productoId, productoEditado);
+                return Ok("Product updated  sucessfully ");
+            }
+
+            return NotFound(new { message = "Product does not exist" });
         }
     }
 }

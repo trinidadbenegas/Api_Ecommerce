@@ -15,19 +15,19 @@ namespace Api_Ecommerce.Controllers
         private readonly IMarcaService _marcaService;
         private readonly IMapper _mapper;
 
-        public MarcaController( IMarcaService marcaService, IMapper mapper)
+        public MarcaController(IMarcaService marcaService, IMapper mapper)
         {
-            _marcaService= marcaService;
+            _marcaService = marcaService;
             _mapper = mapper;
-            
+
         }
 
 
         [HttpGet]
+        public async Task<IActionResult> GetAllMarcas()
+        {
 
-        public async Task<IActionResult> GetAllMarcas() {
-        
-           var marcas = await _marcaService.GetAllMarcas();
+            var marcas = await _marcaService.GetAllMarcas();
 
             return Ok(marcas.Select(marca => _mapper.Map<MarcaDtoId>(marca)));
 
@@ -35,16 +35,15 @@ namespace Api_Ecommerce.Controllers
 
 
         [HttpPost]
-
         public async Task<IActionResult> CreateMarca(MarcaDto marcaDto)
         {
-            var marcaExistente= await _marcaService.GetMarcaByName(marcaDto.Name);
+            var marcaExistente = await _marcaService.GetMarcaByName(marcaDto.Name);
 
             if (!ModelState.IsValid && marcaExistente != null)
             {
 
                 return BadRequest("No se pudo crear la marca");
-               
+
             }
 
             Marca newMarca = _mapper.Map<Marca>(marcaDto);
@@ -56,26 +55,38 @@ namespace Api_Ecommerce.Controllers
         }
 
         [HttpDelete]
-
-
         public async Task<IActionResult> BorrarMarca(int id)
         {
             Marca marcaBorrar = await _marcaService.GetMarcaById(id);
-            await _marcaService.DeleteMarca(id, marcaBorrar);
-            return Ok("The product was deleted");
+            if (marcaBorrar != null)
+            {
+                await _marcaService.DeleteMarca(id, marcaBorrar);
+                return Ok("The product was deleted");
+            }
+            return NotFound(new { message = "Branch does not exist" });
         }
 
         [HttpPut]
-
         public async Task<IActionResult> EditarMarca(int id, [FromBody] MarcaDto marca)
         {
-            var marcaEditar = new Marca
+            if (!ModelState.IsValid) return BadRequest();
+            try
             {
-                Id = id,
-                Name = marca.Name,
-            };
-            await _marcaService.UpdateMarca(id, marcaEditar);
-            return Ok("Product updated  sucessfully ");
+                var marcaEditar = await _marcaService.GetMarcaById(id);
+                if (marcaEditar != null)
+                {
+                    marcaEditar.Name = marca.Name;
+                    await _marcaService.UpdateMarca(id, marcaEditar);
+                    return Ok("Branch updated sucessfully ");
+                }
+                return NotFound(new { message = "Branch does not exist" });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = $"An error occurred while processing your request" });
+            }
+
+
         }
     }
 }

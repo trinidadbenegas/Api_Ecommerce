@@ -3,6 +3,7 @@ using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace Api_Ecommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize (Roles = "Admin")]
     public class CategoriaController : ControllerBase
     {
         private readonly ICategoriaService _categoriaService;
@@ -20,60 +22,79 @@ namespace Api_Ecommerce.Controllers
             _categoriaService= categoriaService;
             _mapper= mapper;
         }
-        [HttpGet]
 
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> GetAllCategorias()
         {
+            try
+            {
+                var categorias = await _categoriaService.GetAllCategorias();
 
-            var categorias = await _categoriaService.GetAllCategorias();
-
-            return Ok(categorias.Select( categoria=> _mapper.Map<CategoriaDtoId>(categoria)));
+                return Ok(categorias.Select(categoria => _mapper.Map<CategoriaDtoId>(categoria)));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = $"An error occurred while processing your request" });
+            }
 
         }
 
 
-        [HttpPost]
-
+        [HttpPost]  
         public async Task<IActionResult> CreateCategoria(CategoriaDto categoria)
         {
-            if (ModelState.IsValid)
+            try
             {
-                
-                var newCategoria = _mapper.Map<Categoria>(categoria);
+                if (ModelState.IsValid)
+                {
 
-                await _categoriaService.CreateCategoria(newCategoria);
-                return Ok("Categoria creada con éxito");
+                    var newCategoria = _mapper.Map<Categoria>(categoria);
+
+                    await _categoriaService.CreateCategoria(newCategoria);
+                    return Ok("Category successfully created");
+                }
+                return BadRequest(ModelState);
             }
-            return BadRequest();
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = $"An error occurred while processing your request" });
+            }
+            
         }
 
 
         [HttpDelete]
-        
-
         public async Task<IActionResult> BorrarCategoria(int id)
         {
             Categoria categoriaBorrar = await _categoriaService.GetCategoriaById(id);
-            await _categoriaService.DeleteCategoria(id, categoriaBorrar);
-            return Ok("The product was deleted");
+            if (categoriaBorrar != null)
+            {
+                await _categoriaService.DeleteCategoria(id, categoriaBorrar);
+                return Ok("Category was deleted");
+            }
+            
+            return NotFound(new { message = "Category does not exist" });
         }
 
+   
         [HttpPut]
-        
-        public async Task< IActionResult> EditarCategoria(int id, [FromBody] CategoriaDtoId categoria)
+        public async Task<IActionResult> EditarCategoria(int id, [FromBody] CategoriaDto categoria)
         {
-            //var categoriaEditar = new Categoria
-            //{
-            //    Id = id,
-            //    Name = categoria.Name,
-            //};
 
-            var categoriaEditar = _mapper.Map<Categoria>(categoria);
-           await _categoriaService.UpdateCategoria(id, categoriaEditar);
+            var categoriaEditar = await _categoriaService.GetCategoriaById(id);
+            
+            if (categoriaEditar != null)
+            {
+                
+                categoriaEditar.Name = categoria.Name;
+                await _categoriaService.UpdateCategoria(id, categoriaEditar);
 
-            return Ok("Product updated  sucessfully ");
+                return Ok("Category updated sucessfully ");
+            }
 
-            //si  se ingresa una id que no matchea con alguna id igual sale mje positivo. manejar posibles errores.
+            return NotFound( new {message = "Category does not exist"});
+
         }
 
     }

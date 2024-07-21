@@ -29,60 +29,75 @@ namespace Api_Ecommerce.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task <IActionResult> Login(Login login)
+        public async Task<IActionResult> Login(Login login)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var user = await _userManager.FindByEmailAsync(login.EmailAddress);
-
-            if (user != null)
+            try
             {
-                var passwordCheck = await _userManager.CheckPasswordAsync(user, login.Password);
-                if (passwordCheck)
+                var user = await _userManager.FindByEmailAsync(login.EmailAddress);
+
+                if (user != null)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-                    if (result.Succeeded)
+                    var passwordCheck = await _userManager.CheckPasswordAsync(user, login.Password);
+                    if (passwordCheck)
                     {
-                        var roles = await _userManager.GetRolesAsync(user);
-                        string role = roles.Contains("Admin") ? "Admin" : "User";
+                        var result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
+                        if (result.Succeeded)
+                        {
+                            var roles = await _userManager.GetRolesAsync(user);
+                            string role = roles.Contains("Admin") ? "Admin" : "User";
 
-                        var token = _generadorToken.GenerateJwtToken(user.Id, "Ap113commerceJWT", role);
-                        return Ok(new { token });
+                            var token = _generadorToken.GenerateJwtToken(user.Id, "Ap113commerceJWT", role);
+                            return Ok(new { token });
+                        }
                     }
+                    return Unauthorized(new { message = "Invalid credentials" });
                 }
-                return BadRequest("Wrong credentials");
+                return Unauthorized(new { message = "Invalid credentials" });
             }
-            return BadRequest("Not Found");
 
+            catch (Exception)
+            {
+
+                return StatusCode(500, new { message = "An error occurred while processing your request" });
+            }
 
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register( Register register)
+        public async Task<IActionResult> Register(Register register)
         {
-            if(!ModelState.IsValid) return BadRequest();
-
-            var user = await _userManager.FindByEmailAsync(register.EmailAddress);
-            if (user != null) 
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            try
             {
-                ModelState.AddModelError("","User already exists");
-                return StatusCode(422, ModelState);
+                var user = await _userManager.FindByEmailAsync(register.EmailAddress);
+                if (user != null)
+                {
+                    ModelState.AddModelError("", "User already exists");
+                    return StatusCode(422, ModelState);
+                }
+                var newUser = new AppUser
+                {
+                    FullName = register.FullName,
+                    Email = register.EmailAddress,
+                    UserName = register.EmailAddress,
+                    Address = register.Address
+                };
+
+                var newUserResponse = await _userManager.CreateAsync(newUser, register.Password);
+
+                if (newUserResponse.Succeeded)
+                    await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+
+                return Ok("Register Completed");
             }
-            var newUser = new AppUser
+            catch (Exception)
             {
-                FullName = register.FullName,
-                Email = register.EmailAddress,
-                UserName = register.EmailAddress,
-                Address = register.Address
-            };
+                return StatusCode(500, new { message = $"An error occurred while processing your request" });
+            }
 
-            var newUserResponse = await _userManager.CreateAsync(newUser, register.Password);
-
-            if (newUserResponse.Succeeded)
-                await _userManager.AddToRoleAsync(newUser, UserRoles.User);
-
-            return Ok("Register Completed");
         }
 
         [Authorize]
@@ -91,8 +106,9 @@ namespace Api_Ecommerce.Controllers
 
         public async Task<IActionResult> LogOut()
         {
+
             await _signInManager.SignOutAsync();
-            return Ok("Sesión cerrada");
+            return Ok("Logged out");
         }
 
 
