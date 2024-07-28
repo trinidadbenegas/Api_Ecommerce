@@ -13,6 +13,7 @@ namespace Api_Ecommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = UserRoles.Admin)]
     public class ProductoController : ControllerBase
     {
         private readonly IProductoService _productoService;
@@ -28,7 +29,7 @@ namespace Api_Ecommerce.Controllers
             _mapper = mapper;
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllProductos()
         {
@@ -39,6 +40,7 @@ namespace Api_Ecommerce.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("Producto")]
 
@@ -54,6 +56,8 @@ namespace Api_Ecommerce.Controllers
             var productoDto = _mapper.Map<ProductoDtoRequest>(producto);
             return Ok(productoDto);
         }
+
+        [AllowAnonymous]
         [HttpGet]
         [Route("Categoria")]
 
@@ -69,6 +73,7 @@ namespace Api_Ecommerce.Controllers
             
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("Marca")]
 
@@ -85,7 +90,7 @@ namespace Api_Ecommerce.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = UserRoles.Admin)]
+        
         public async Task<IActionResult> CrearProducto(ProductoDto productoDto)
         {
             if (!ModelState.IsValid || productoDto == null)

@@ -1,4 +1,5 @@
 ﻿using Api_Ecommerce.Data.Dtos;
+using Api_Ecommerce.Data.Static;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
@@ -11,7 +12,7 @@ namespace Api_Ecommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize (Roles = "Admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public class CategoriaController : ControllerBase
     {
         private readonly ICategoriaService _categoriaService;

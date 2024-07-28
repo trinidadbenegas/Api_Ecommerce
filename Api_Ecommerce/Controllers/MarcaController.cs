@@ -1,8 +1,10 @@
 ﻿using Api_Ecommerce.Data.Dtos;
+using Api_Ecommerce.Data.Static;
 using Api_Ecommerce.Interfaces;
 using Api_Ecommerce.Models;
 using Api_Ecommerce.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +12,7 @@ namespace Api_Ecommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = UserRoles.Admin)]
     public class MarcaController : ControllerBase
     {
         private readonly IMarcaService _marcaService;
@@ -22,7 +25,7 @@ namespace Api_Ecommerce.Controllers
 
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllMarcas()
         {
